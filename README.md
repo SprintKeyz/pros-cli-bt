@@ -1,4 +1,4 @@
-# PROS CLI
+# PROS CLI With Bluetooth
 
 [![Build Status](https://dev.azure.com/purdue-acm-sigbots/CLI/_apis/build/status/purduesigbots.pros-cli?branchName=develop)](https://dev.azure.com/purdue-acm-sigbots/CLI/_build/latest?definitionId=6&branchName=develop)
 
@@ -19,6 +19,10 @@ PROS CLI can be installed directly from source with the following prerequisites:
 
 Clone this repository, then run `pip install -e <dir>`. Pip will install all the dependencies necessary.
 
+## Running for development
+PROS CLI can be easily run for development. First, just install all required packages with `pip install -r requirements.txt` (preferably in a virtual environment). From there, all that's needed is to call `python -m pros.cli.main` followed by any parameters!
+
+
 ## About this project
 Here's a quick breakdown of the packages involved in this project:
 
@@ -31,5 +35,7 @@ Here's a quick breakdown of the packages involved in this project:
 - `pros.jinx`: JINX parsing and server
 - `pros.serial`: package for all serial communication with VEX Microcontrollers
 - `pros.upgrade`: package for upgrading the PROS CLI, including downloading and executing installation sequence
+
+In addition, this fork of the PROS CLI has been modified to support Bluetooth. This allows teams to interface with the V5 Brain over Bluetooth, providing faster data transfer speeds than a wireless link provided by the controller.
 
 See https://pros.cs.purdue.edu/v5/cli for end user documentation and developer notes.

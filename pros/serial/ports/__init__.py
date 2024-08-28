@@ -4,6 +4,7 @@ from pros.common import logger
 from serial.tools import list_ports as list_ports
 
 from .base_port import BasePort, PortConnectionException, PortException
+from .bluetooth_port import BluetoothPort
 from .direct_port import DirectPort
 # from .v5_wireless_port import V5WirelessPort
 

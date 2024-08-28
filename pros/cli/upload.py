@@ -39,6 +39,7 @@ def upload_cli():
               help='Change the description displayed for the program.')
 @click.option('--name', 'remote_name', default=None, type=str, cls=PROSOption, group='V5 Options',
               help='Change the name of the program.')
+@click.option('--bluetooth', '-b', is_flag=True, help='Use Bluetooth for communication.', cls=PROSOption, group='V5 Options')
 
 @default_options
 def upload(path: Optional[str], project: Optional[c.Project], port: str, **kwargs):
@@ -54,6 +55,7 @@ def upload(path: Optional[str], project: Optional[c.Project], port: str, **kwarg
     analytics.send("upload")
     import pros.serial.devices.vex as vex
     from pros.serial.ports import DirectPort
+    from pros.serial.ports import BluetoothPort
     kwargs['ide_version'] = project.kernel if not project==None else "None"
     kwargs['ide'] = 'PROS'
     if path is None or os.path.isdir(path):
@@ -103,14 +105,22 @@ def upload(path: Optional[str], project: Optional[c.Project], port: str, **kwarg
         logger(__name__).debug(f'Target not specified. Arguments provided: {kwargs}')
         raise click.UsageError('Target not specified. specify a project (using the file argument) or target manually')
     if kwargs['target'] == 'v5':
-        port = resolve_v5_port(port, 'system')[0]
+
+        # bluetooth!
+        if not kwargs['bluetooth']:
+            port = resolve_v5_port(port, 'system')[0]
     elif kwargs['target'] == 'cortex':
         port = resolve_cortex_port(port)
     else:
         logger(__name__).debug(f"Invalid target provided: {kwargs['target']}")
         logger(__name__).debug('Target should be one of ("v5" or "cortex").')
-    if not port:
-        raise dont_send(click.UsageError('No port provided or located. Make sure to specify --target if needed.'))
+
+    # TODO: Fix this and reimplement!
+
+    #if not port:
+        #raise dont_send(click.UsageError('No port provided or located. Make sure to specify --target if needed.'))
+    
+
     if kwargs['target'] == 'v5':
         kwargs['remote_name'] = kwargs['name'] if kwargs.get('name',None) else kwargs['remote_name']
         if kwargs['remote_name'] is None:
@@ -140,7 +150,10 @@ def upload(path: Optional[str], project: Optional[c.Project], port: str, **kwarg
     logger(__name__).debug('Arguments: {}'.format(str(kwargs)))
     # Do the actual uploading!
     try:
-        ser = DirectPort(port)
+        if kwargs['bluetooth']:
+            ser = BluetoothPort(port)
+        else:
+            ser = DirectPort(port)
         device = None
         if kwargs['target'] == 'v5':
             device = vex.V5Device(ser)
